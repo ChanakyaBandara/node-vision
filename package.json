@@ -6,8 +6,10 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "aws-sdk": "^2.1061.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "dotenv": "^14.2.0",
     "ejs": "~2.6.1",
     "express": "~4.16.1",
     "express-fileupload": "^1.2.1",

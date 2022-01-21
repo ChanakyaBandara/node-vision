@@ -1,16 +1,54 @@
 var express = require('express');
 var router = express.Router();
+var AWS = require('aws-sdk');
 
-router.post('/classify', function(req, res, next) {
-  // DON'T return the hardcoded response after implementing the backend
-  let response = ["shoe", "red", "nike"];
+router.post('/classify', (req, res, next) => {
 
-  // Your code starts here //
+  if (!req.files || req.files.length == 0) {
+    res.status(400).json({
+      "error": "No Image Uploaded."
+    });
 
-  // Your code ends here //
+    return;
+  }
 
-  res.json({
-    "labels": response
+  // AWS Rekognition Configuration
+  const config = new AWS.Config({
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_KEY,
+    region: process.env.AWS_REGION
+  });
+
+  AWS.config.update(config);
+
+  //AWS Rekognition Client
+  const client = new AWS.Rekognition();
+
+  const uploadedFile = req.files.file;
+
+  //Bind buffer data of image as a parameter
+  const params = {
+    Image: {
+      Bytes: uploadedFile.data
+    },
+  };
+
+  client.detectLabels(params, (awsErr, awsRes) => {
+
+    //Handle errors from AWS service
+    if (awsErr) {
+      console.log(awsErr);
+
+      res.status(500).json({
+        "error": "Internal server error."
+      });
+
+    } else {
+      res.json({
+        "labels": awsRes.Labels.map((label) => label.Name)
+      });
+    }
+
   });
 });
 

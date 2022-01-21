@@ -9,6 +9,9 @@ var fileUpload = require('express-fileupload');
 var indexRouter = require('./routes/index');
 var visionRouter = require('./routes/vision');
 
+var dotenv = require('dotenv');
+dotenv.config();
+
 var app = express();
 
 // view engine setup
